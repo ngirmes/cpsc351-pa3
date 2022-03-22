@@ -37,14 +37,22 @@ void sort_array(sort_parameters *params){
     qsort(params->sub_array, params->size, sizeof(int), compare);
 }
 
-//
+//Function merges two arrays
 void merge_array(merge_parameters *params){
-    
+    for (int i = 0; i < SIZE; i++){
+        if (params->left.sub_array < params->right.sub_array)
+            result[i] = *params->left.sub_array;
+        else
+            result[i] = *params->right.sub_array;
+    }
 }
 
 //Function creates threads for sorting and merging
 void pthread_create(sort_parameters *sort_params, merge_parameters *merge_params){
-    sort_array(sort_params);
+    if (merge_params == NULL)
+        sort_array(sort_params);
+    else
+        merge_array(merge_params);
 }
 
 //Main Function
@@ -81,8 +89,18 @@ int main(int argc, char *argv[])
     free(params_left);
     free(params_right);
     free(params_merge);
+
+    //Print array
+    printf("Unsorted: ");
     for (int i = 0; i < SIZE; i++){
         printf("%d ", list[i]);
     }
+
+    //printf("%ls", params_merge->left.sub_array);
+    printf("\nSorted: ");
+    for (int i = 0; i < SIZE; i++){
+        printf("%d ", result[i]);
+    }
+    printf("\n");
     return 0;
 }
