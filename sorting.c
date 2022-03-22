@@ -15,41 +15,74 @@
 int list[] = {7, 12, 19, 3, 18, 4, 2, -5, 6, 15, 8};
 int result[SIZE] = {0};
 
+
 //Structs for passing array info
-typedef struct{
+typedef struct {
     int *sub_array;
     unsigned int size;
-} sorting_thread_parameters;
+} sort_parameters;
 
 typedef struct{
-    sorting_thread_parameters left;
-    sorting_thread_parameters right;
-} merging_thread_parameters;
+    sort_parameters left;
+    sort_parameters right;
+} merge_parameters;
+
+//Compare function for qsort()
+int compare(const void* a, const void* b){
+    return (*(int*)a - *(int*)b);
+}
+
+//Function sorts beginning with passed index to a certain passed size
+void sort_array(sort_parameters *params){
+    qsort(params->sub_array, params->size, sizeof(int), compare);
+}
+
+//
+void merge_array(merge_parameters *params){
+    
+}
 
 //Function creates threads for sorting and merging
-void pthread_create(){
-    //fork();
+void pthread_create(sort_parameters *sort_params, merge_parameters *merge_params){
+    sort_array(sort_params);
 }
 
 //Main Function
 int main(int argc, char *argv[])
 {
-    sorting_thread_parameters *params_left = malloc(sizeof(sorting_thread_parameters));
+    //Create instance of sorting thread struct for first half of array and allocate memory
+    sort_parameters *params_left = malloc(sizeof(sort_parameters));
+
+    //Set variables for first half of array
     params_left->sub_array = list;
     params_left->size = SIZE/2;
-    //Pass first unsorted array to pthread_create and sort using an in-place sort
-    //pthread_create(params_left);
-    sorting_thread_parameters *params_right = malloc(sizeof(sorting_thread_parameters));
+
+    //Call pthread_create for first half of array
+    pthread_create(params_left, NULL);
+
+    //Create instance of sorting thread struct for second half of array and allocate memory
+    sort_parameters *params_right = malloc(sizeof(sort_parameters));
+
+    //Set variables for second half of array
     params_right->sub_array = list + params_left->size;
     params_right->size = SIZE - params_left->size;
-    //Pass second unsorted array to pthread_create and sort using an in-place sort
-    //pthread_create(params_right);
+
+    //Call pthread_create for first half of array
+    pthread_create(params_right, NULL);
+
     //wait(0);
-    merging_thread_parameters *params_merge = malloc(sizeof(sorting_thread_parameters));
+    merge_parameters *params_merge = malloc(sizeof(merge_parameters));
     params_merge->left = *params_left;
     params_merge->right = *params_right;
-    //pthread_create(params_merge);
+    //pthread_create(NULL, params_merge);
     //Parent thread to output sorted array
-    //printf("Sorted: " + result);
+
+    //Free space used with malloc
+    free(params_left);
+    free(params_right);
+    free(params_merge);
+    for (int i = 0; i < SIZE; i++){
+        printf("%d ", list[i]);
+    }
     return 0;
 }
