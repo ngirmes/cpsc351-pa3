@@ -94,10 +94,7 @@ int main(int argc, char *argv[])
     params_right->size = SIZE - params_left->size;
 
     // Call pthread_create for first half of array
-    fork();
-    if (pid == 0)
-        pthread_create(params_right, NULL);
-    wait(0);
+    pthread_create(params_right, NULL);
 
     // Print halves sorted array
     printf("\nHalves sorted: ");
@@ -105,7 +102,7 @@ int main(int argc, char *argv[])
     {
         printf("%d ", list[i]);
     }
-    
+
     merge_parameters *params_merge = malloc(sizeof(merge_parameters));
 
     // Set pointers to merge
@@ -113,10 +110,7 @@ int main(int argc, char *argv[])
     params_merge->right = params_right->sub_array;
 
     // Call pthread_create to merge
-    fork();
-    if (pid == 0)
-        pthread_create(NULL, params_merge);
-    wait(0);
+    pthread_create(NULL, params_merge);
 
     // Free space used with malloc
     free(params_left);
